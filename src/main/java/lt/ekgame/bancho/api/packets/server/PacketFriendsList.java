@@ -1,30 +1,38 @@
-package lt.ekgame.bancho.api.packets.client;
+package lt.ekgame.bancho.api.packets.server;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import lt.ekgame.bancho.api.Bancho;
 import lt.ekgame.bancho.api.packets.ByteDataInputStream;
 import lt.ekgame.bancho.api.packets.ByteDataOutputStream;
 import lt.ekgame.bancho.api.packets.Packet;
 
-/**
- * Signals to stop spectating.
- */
-public class PacketStopSpectating extends Packet {
+
+public class PacketFriendsList extends Packet {
 	
-	@Override
-	public void read(ByteDataInputStream stream, int length) throws IOException {
-		// just a signal, no actual data
-	}
+	List<Integer> list = new ArrayList<>();
 
 	@Override
+	public void read(ByteDataInputStream stream, int length) throws IOException {
+		int num = stream.readShort();
+		for (int i = 0; i < num; i++)
+			list.add(stream.readInt());
+	}
+	
+	@Override
 	public void write(ByteDataOutputStream stream) throws IOException {
-		// just a signal, no actual data
+		stream.writeShort((short) list.size());
+		for (int number : list)
+			stream.writeInt(number);
 	}
 
 	@Override
 	public int size(Bancho bancho) {
-		return 0;
+		return 2 + 4*list.size();
 	}
+	
+	
 
 }

@@ -7,6 +7,7 @@ import lt.ekgame.bancho.api.packets.ByteDataInputStream;
 import lt.ekgame.bancho.api.packets.ByteDataOutputStream;
 import lt.ekgame.bancho.api.packets.Packet;
 import lt.ekgame.bancho.api.utils.DataUtils;
+import lt.ekgame.bancho.client.impl.BanchoClientManager;
 
 public class MultiplayerRoom extends Packet {
 
@@ -16,7 +17,7 @@ public class MultiplayerRoom extends Packet {
 	public MatchType matchType;
 	public MatchScoringType scoringType;
 	public MatchTeamType teamType;
-	public PlayMode playmode;
+	public Playmode playmode;
 	public String roomName, roomPassword;
 	public int openSlots;
 	public String beatmapName, beatmapChecksum;
@@ -35,20 +36,24 @@ public class MultiplayerRoom extends Packet {
 	
 	public MultiplayerRoom() {}
 	
+	public MultiplayerRoom(String roomName, String roomPassword, int openSlots, BanchoClientManager manager) {
+		this(roomName, roomPassword, openSlots, manager.getUserStatus().getBeatmap(), manager.getUserStatus().getMods(), manager.getUserId());
+	}
+	
 	public MultiplayerRoom(String roomName, String roomPassword, int openSlots, Beatmap beatmap, Mods mods, int hostId) {
-		this(MatchType.STANDART, MatchScoringType.SCORE, MatchTeamType.HEAT_TO_HEAD, PlayMode.OSU, roomName, 
+		this(MatchType.STANDART, MatchScoringType.SCORE, MatchTeamType.HEAT_TO_HEAD, Playmode.OSU, roomName, 
 			roomPassword, openSlots, beatmap.getName(), beatmap.getChecksum(), beatmap.getId(), mods, hostId,
 			MatchSpecialMode.NONE, 0);
 	}
 	
 	public MultiplayerRoom(MatchType matchType, MatchScoringType scoringType, MatchTeamType teamType,
-			PlayMode playmode, MatchSpecialMode specialMode, String roomName, String roomPassword, 
+			Playmode playmode, MatchSpecialMode specialMode, String roomName, String roomPassword, 
 			int openSlots, Beatmap beatmap, Mods mods, int hostId) {
 		this(matchType, scoringType, teamType, playmode, roomName, roomPassword, openSlots, 
 			beatmap.getName(), beatmap.getChecksum(), beatmap.getId(), mods, hostId, specialMode, 0);
 	}
 	
-	public MultiplayerRoom(MatchType matchType, MatchScoringType scoringType, MatchTeamType teamType, PlayMode playmode,
+	public MultiplayerRoom(MatchType matchType, MatchScoringType scoringType, MatchTeamType teamType, Playmode playmode,
 			String roomName, String roomPassword, int openSlots, String beatmapName, String beatmapChecksum, int beatmapId,
 			Mods mods, int hostId, MatchSpecialMode specialMode, int seed) {
 		this.matchType = matchType;
@@ -141,7 +146,7 @@ public class MultiplayerRoom extends Packet {
 				slotId[i] = stream.readInt();
 		
 		hostId = stream.readInt();
-		playmode = PlayMode.values()[stream.readByte()];
+		playmode = Playmode.values()[stream.readByte()];
 		scoringType = MatchScoringType.values()[stream.readByte()];
 		teamType = MatchTeamType.values()[stream.readByte()];
 		specialMode = MatchSpecialMode.values()[stream.readByte()];

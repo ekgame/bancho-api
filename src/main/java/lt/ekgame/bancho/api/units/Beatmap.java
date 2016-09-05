@@ -9,7 +9,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public class Beatmap {
 	
-	public static final Beatmap DEFAULT = new Beatmap("", "", "", "", "", 0);
+	public static final Beatmap DEFAULT = new Beatmap(" ", "", 0);
 	
 	private String title;
 	private String artist;
@@ -19,6 +19,16 @@ public class Beatmap {
 	private int beatmapId = 0;
 	
 	private String beatmapName;
+	
+	public Beatmap(String beatmapName) {
+		this.artist = "unknown";
+		this.title = "unknown";
+		this.version = "unknown";
+		this.creator = "unknown";
+		this.beatmapName = beatmapName;
+		this.beatmapMD5 = "";
+		this.beatmapId = 0;
+	}
 	
 	public Beatmap(String beatmapName, String beatmapMD5, int beatmapId) {
 		this.artist = "unknown";

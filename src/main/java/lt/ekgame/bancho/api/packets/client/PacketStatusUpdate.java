@@ -8,8 +8,8 @@ import lt.ekgame.bancho.api.packets.ByteDataOutputStream;
 import lt.ekgame.bancho.api.packets.Packet;
 import lt.ekgame.bancho.api.units.Beatmap;
 import lt.ekgame.bancho.api.units.Mods;
-import lt.ekgame.bancho.api.units.PlayMode;
-import lt.ekgame.bancho.api.units.UserStatus;
+import lt.ekgame.bancho.api.units.Playmode;
+import lt.ekgame.bancho.api.units.UserState;
 import lt.ekgame.bancho.api.utils.DataUtils;
 
 /**
@@ -17,15 +17,15 @@ import lt.ekgame.bancho.api.utils.DataUtils;
  */
 public class PacketStatusUpdate extends Packet {
 	
-	public UserStatus status;
+	public UserState status;
 	public String beatmapName, beatmapChecksum;
 	public Mods mods;
-	public PlayMode playmode;
+	public Playmode playmode;
 	public int integer;
 	
 	public PacketStatusUpdate() {}
 	
-	public PacketStatusUpdate(UserStatus status, String beatmapName, String beatmapChecksum, Mods mods, PlayMode playmode, int integer) {
+	public PacketStatusUpdate(UserState status, String beatmapName, String beatmapChecksum, Mods mods, Playmode playmode, int integer) {
 		this.status = status;
 		this.beatmapName = beatmapName;
 		this.beatmapChecksum = beatmapChecksum;
@@ -34,17 +34,17 @@ public class PacketStatusUpdate extends Packet {
 		this.integer = integer;
 	}
 	
-	public PacketStatusUpdate(UserStatus status, Beatmap beatmap, Mods mods, PlayMode playmode) {
+	public PacketStatusUpdate(UserState status, Beatmap beatmap, Mods mods, Playmode playmode) {
 		this(status, beatmap.getName(), beatmap.getChecksum(), mods, playmode, 0);
 	}
 
 	@Override
 	public void read(ByteDataInputStream stream, int length) throws IOException {
-		status = UserStatus.values()[stream.readByte()];
+		status = UserState.values()[stream.readByte()];
 		beatmapName = stream.readString();
 		beatmapChecksum = stream.readString();
 		mods = new Mods(stream.readInt());
-		playmode = PlayMode.values()[stream.readByte()];
+		playmode = Playmode.values()[stream.readByte()];
 		integer = stream.readInt();
 	}
 

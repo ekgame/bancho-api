@@ -36,6 +36,14 @@ public class ByteDataInputStream extends InputStream {
 		return (short) readBytes(2);
 	}
 	
+	public int readUShort() throws IOException {
+		return (int) readBytes(2);
+	}
+	
+	public boolean readBoolean() throws IOException {
+		return readByte() == 1;
+	}
+	
 	public short readUByte() throws IOException {
 		return (short) readBytes(1);
 	}
@@ -92,6 +100,11 @@ public class ByteDataInputStream extends InputStream {
 	public float readFloat() throws IOException {
 		byte[] bytes = readByteArray(4);
 		return ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+	}
+	
+	public double readDouble() throws IOException {
+		byte[] bytes = readByteArray(8);
+		return ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getDouble();
 	}
 
 	public long readLong() throws IOException {

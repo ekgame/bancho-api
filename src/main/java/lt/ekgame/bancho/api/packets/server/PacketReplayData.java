@@ -6,23 +6,26 @@ import java.util.List;
 
 import lt.ekgame.bancho.api.packets.ByteDataInputStream;
 import lt.ekgame.bancho.api.packets.Packet;
+import lt.ekgame.bancho.api.units.Score;
 
 public class PacketReplayData extends Packet {
-	// Weird number that goes into millions seems to increment with every new game
-	public int integer; // Some kind of gameplay id?
+	
+	public int seed;
 	public List<Frame> replayFrames = new ArrayList<Frame>();
 	public ReplayStatus status;
+	public Score score;
 
 	@Override
 	public void read(ByteDataInputStream stream, int length) throws IOException {
 		if (stream.getProtocolVersion() >= 18)
-			integer = stream.readInt();
+			seed = stream.readInt();
 		
 		int len = stream.readShort();
 		for (int i = 0; i < len; i++)
 			replayFrames.add(new Frame(stream));
 		
 		status = ReplayStatus.values()[stream.readByte()];
+		score = new Score(stream);
 	}
 	
 	public class Frame {

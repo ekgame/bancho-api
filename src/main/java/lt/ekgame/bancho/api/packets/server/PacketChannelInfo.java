@@ -9,41 +9,41 @@ import lt.ekgame.bancho.api.packets.Packet;
 import lt.ekgame.bancho.api.utils.DataUtils;
 
 /**
- * Strangely, the client doesn't actually handle this packet, but the structure
- * is easy enough to still understand it.
+ * Notifies the client about a public room's existence and updates (active users).
  */
 public class PacketChannelInfo extends Packet {
 	
-	public String channel;
-	public String description;
-	public int integer;
+	public String channelName;
+	public String channelDescription;
+	public int numUsers;
 	
 	public PacketChannelInfo() {}
 	
-	public PacketChannelInfo(String channel, String description, int integer) {
-		this.channel = channel;
-		this.description = description;
-		this.integer = integer;
+	public PacketChannelInfo(String name, String description, int users) {
+		channelName = name;
+		channelDescription = description;
+		numUsers = users;
 	}
 
 	@Override
 	public void read(ByteDataInputStream stream, int length) throws IOException {
-		channel = stream.readString();
-		description = stream.readString();
-		integer = stream.readInt();
+		channelName = stream.readString();
+		channelDescription = stream.readString();
+		numUsers = stream.readInt();
 	}
 
 	@Override
 	public void write(ByteDataOutputStream stream) throws IOException {
-		stream.writeString(channel);
-		stream.writeString(description);
-		stream.writeInt(integer);
+		stream.writeString(channelName);
+		stream.writeString(channelDescription);
+		stream.writeInt(numUsers);
 	}
 
 	@Override
 	public int size(Bancho bancho) {
-		return DataUtils.stringLen(channel) + DataUtils.stringLen(description) + 4;
+		return DataUtils.stringLen(channelName) 
+			 + DataUtils.stringLen(channelDescription)
+			 + 4;
 	}
 
-	
 }

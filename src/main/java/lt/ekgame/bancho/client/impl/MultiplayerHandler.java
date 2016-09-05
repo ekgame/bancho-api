@@ -1,4 +1,4 @@
-package lt.ekgame.bancho.client;
+package lt.ekgame.bancho.client.impl;
 
 import lt.ekgame.bancho.api.packets.Packet;
 import lt.ekgame.bancho.api.packets.client.PacketCreateRoom;
@@ -17,11 +17,13 @@ import lt.ekgame.bancho.api.packets.server.PacketRoomUpdate;
 import lt.ekgame.bancho.api.units.Beatmap;
 import lt.ekgame.bancho.api.units.MatchSpecialMode;
 import lt.ekgame.bancho.api.units.MultiplayerRoom;
-import lt.ekgame.bancho.api.units.UserStatus;
+import lt.ekgame.bancho.api.units.UserState;
+import lt.ekgame.bancho.client.BanchoClient;
+import lt.ekgame.bancho.client.PacketHandler;
 
 public class MultiplayerHandler implements PacketHandler {
 	
-	private ClientHandler clientHandler;
+	private BanchoClientManager clientHandler;
 	
 	private MultiplayerRoom currentRoom;
 	private BanchoClient bancho;
@@ -29,7 +31,7 @@ public class MultiplayerHandler implements PacketHandler {
 	private boolean enabledMultiplayer = false;
 	private boolean isReady = false;
 	
-	public MultiplayerHandler(BanchoClient bancho, ClientHandler clientHandler) {
+	public MultiplayerHandler(BanchoClient bancho, BanchoClientManager clientHandler) {
 		this.bancho = bancho;
 		this.clientHandler = clientHandler;
 	}
@@ -38,8 +40,6 @@ public class MultiplayerHandler implements PacketHandler {
 		if (!enabledMultiplayer) {
 			enabledMultiplayer = true;
 			bancho.sendPacket(new PacketSignalMultiplayer());
-			clientHandler.setStatus(UserStatus.LOBBY);
-			clientHandler.sendStatusUpdate();
 		}
 	}
 	
@@ -49,7 +49,7 @@ public class MultiplayerHandler implements PacketHandler {
 		
 		enableMultiplayer();
 		roomPassword = password;
-		MultiplayerRoom room = new MultiplayerRoom(roomname, password, openSlots, clientHandler.getCurrentBeatmap(), clientHandler.getMods(), clientHandler.getUserId());
+		MultiplayerRoom room = new MultiplayerRoom(roomname, password, openSlots, bancho.getClientManager());
 		bancho.sendPacket(new PacketCreateRoom(room));
 	}
 	
@@ -70,13 +70,12 @@ public class MultiplayerHandler implements PacketHandler {
 			setReady(true);
 			bancho.sendPacket(new PacketRoomStartGame());
 			bancho.sendPacket(new PacketRoomMapDoneLoading());
-			clientHandler.setCurrentBeatmap(currentRoom.getBeatmap());
-			clientHandler.sendStatusUpdate();
+			clientHandler.changeStatus().setBeatmap(currentRoom.getBeatmap()).send();
 		}
 	}
 
 	@Override
-	public void handle(Packet packet) {
+	public void handlePacket(Packet packet) {
 		if (packet instanceof PacketRoomUpdate && isHost()) {
 			PacketRoomUpdate update = (PacketRoomUpdate) packet;
 			if (update.room.matchId == getMatchId()) {
@@ -87,19 +86,16 @@ public class MultiplayerHandler implements PacketHandler {
 		if (packet instanceof PacketRoomJoined) {
 			PacketRoomJoined roomUpdate = (PacketRoomJoined) packet;
 			currentRoom = roomUpdate.room;
-			clientHandler.setStatus(UserStatus.MULTIPLAYER);
-			clientHandler.sendStatusUpdate();
+			clientHandler.changeStatus().setStatus(UserState.MULTIPLAYER).send();
 		}
 		
 		if (packet instanceof PacketRoomEveryoneLoaded) {
 			bancho.sendPacket(new PacketRoomFinishMap());
-			clientHandler.setStatus(UserStatus.MULTIPLAYING);
-			clientHandler.sendStatusUpdate();
+			clientHandler.changeStatus().setStatus(UserState.MULTIPLAYING).send();
 		}
 		
 		if (packet instanceof PacketRoomEveryoneFinished) {
-			clientHandler.setStatus(UserStatus.MULTIPLAYER);
-			clientHandler.sendStatusUpdate();
+			clientHandler.changeStatus().setStatus(UserState.MULTIPLAYER).send();
 			setReady(false);
 		}
 	}

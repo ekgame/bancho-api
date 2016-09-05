@@ -1,4 +1,4 @@
-package lt.ekgame.bancho.api.packets.client;
+package lt.ekgame.bancho.api.packets.server;
 
 import java.io.IOException;
 
@@ -8,23 +8,33 @@ import lt.ekgame.bancho.api.packets.ByteDataOutputStream;
 import lt.ekgame.bancho.api.packets.Packet;
 
 /**
- * Signals to stop spectating.
+ * Seems to be information about your silence.
  */
-public class PacketStopSpectating extends Packet {
+public class PacketSilenceInfo extends Packet {
 	
+	public int silenceLength;
+	
+	public PacketSilenceInfo() {}
+	
+	public PacketSilenceInfo(int timeDifference) {
+		this.silenceLength = timeDifference;
+	}
+
 	@Override
 	public void read(ByteDataInputStream stream, int length) throws IOException {
-		// just a signal, no actual data
+		silenceLength = stream.readInt();
 	}
 
 	@Override
 	public void write(ByteDataOutputStream stream) throws IOException {
-		// just a signal, no actual data
+		stream.writeInt(silenceLength);
 	}
 
 	@Override
 	public int size(Bancho bancho) {
-		return 0;
+		return 4;
 	}
-
+	
+	
+	
 }
