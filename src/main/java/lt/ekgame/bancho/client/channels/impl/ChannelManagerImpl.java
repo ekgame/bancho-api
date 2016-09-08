@@ -25,7 +25,6 @@ import lt.ekgame.bancho.client.channels.ChannelPublic;
 import lt.ekgame.bancho.client.channels.User;
 import lt.ekgame.bancho.client.events.EventMessage;
 import lt.ekgame.bancho.client.events.EventPostUpdate;
-import lt.ekgame.bancho.client.impl.StatusImpl;
 
 public class ChannelManagerImpl implements PacketHandler, ChannelManager {
 	
@@ -132,6 +131,14 @@ public class ChannelManagerImpl implements PacketHandler, ChannelManager {
 		User user = new UserImpl(this, userId);
 		users.put(userId, user);
 		return user;
+	}
+	
+	@Override
+	public User getUserByName(String username) {
+		for (User user : users.values())
+			if (user.getUsername() != null && user.getUsername().equalsIgnoreCase(username))
+				return user;
+		return null;
 	}
 
 	@Override

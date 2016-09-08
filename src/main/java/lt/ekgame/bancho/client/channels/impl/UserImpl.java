@@ -64,6 +64,12 @@ public class UserImpl implements User {
 	public String getUsername() {
 		return username;
 	}
+	
+	public boolean equals(Object other) {
+		if (other instanceof User) 
+			return ((User)other).getUserId() == userId;
+		return false;
+	}
 
 	@Override
 	public boolean isFriend() {

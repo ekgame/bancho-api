@@ -12,6 +12,7 @@ public class ChannelPublicImpl implements ChannelPublic {
 	
 	public ChannelPublicImpl(String name, ChannelManager manager) {
 		this.name = name.toLowerCase();
+		this.manager = manager;
 	}
 	
 	public void setUserCount(int userCount) {

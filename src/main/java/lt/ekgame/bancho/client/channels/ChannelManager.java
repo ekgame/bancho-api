@@ -11,6 +11,8 @@ public interface ChannelManager {
 	
 	User getUserById(int userId);
 	
+	User getUserByName(String username);
+	
 	ChannelPublic getPublicChannel(String name);
 	
 	void sendMessagePacket(Packet packet);
