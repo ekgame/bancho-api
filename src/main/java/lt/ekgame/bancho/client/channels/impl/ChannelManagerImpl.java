@@ -1,6 +1,7 @@
 package lt.ekgame.bancho.client.channels.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -161,5 +162,10 @@ public class ChannelManagerImpl implements PacketHandler, ChannelManager {
 	@Override
 	public BanchoClient getBancho() {
 		return client;
+	}
+
+	@Override
+	public Collection<User> getUsers() {
+		return users.values();
 	}
 }

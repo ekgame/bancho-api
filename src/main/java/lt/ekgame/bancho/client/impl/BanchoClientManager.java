@@ -10,6 +10,7 @@ import lt.ekgame.bancho.api.packets.server.PacketLoginReply;
 import lt.ekgame.bancho.client.BanchoClient;
 import lt.ekgame.bancho.client.PacketHandler;
 import lt.ekgame.bancho.client.Status;
+import lt.ekgame.bancho.client.events.EventFinishedLoading;
 
 public class BanchoClientManager implements PacketHandler {
 	
@@ -45,6 +46,7 @@ public class BanchoClientManager implements PacketHandler {
 		
 		if (packet instanceof PacketReceivingFinished) {
 			setUserStatus(StatusImpl.DEFAULT);
+			bancho.dispatchEvent(new EventFinishedLoading());
 			isConnected = true;
 		}
 		
